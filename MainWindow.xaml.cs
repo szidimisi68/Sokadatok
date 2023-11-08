@@ -15,18 +15,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApp2
+namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-            List<Organization> organizations = new List<Organization>();
+        List<Organization> organizations = new List<Organization>();
         public MainWindow()
         {
-            File.ReadAllLines("C:\\teszt\\organizations-100000.csv").Skip(1).ToList().ForEach(x => organizations.Add(new Organization(x.Split(";"))));
-            
+            File.ReadAllLines("C:\\Users\\szidor.mihaly\\organizations-100000.csv").Skip(1).ToList().ForEach(x => organizations.Add(new Organization(x.Split(";"))));
+
             InitializeComponent();
 
             List<string> orszagok = new List<string>();
@@ -43,38 +43,21 @@ namespace WpfApp2
             lbOsszes.Content = $"Összes: {organizations.Sum(x => x.EmployeesNumber)}";
         }
 
-        private void cbOrszag_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private void cbValt_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<Organization> szurt = organizations;
 
-            string orszag = cbOrszag.SelectedItem.ToString();
             if (cbOrszag.SelectedIndex != 0 && cbOrszag.SelectedIndex != -1)
             {
+                string orszag = cbOrszag.SelectedItem.ToString();
                 szurt = orszagSzures(szurt, orszag);
             }
-            int ev = Convert.ToInt32(cbEv.SelectedItem);
+
 
             if (cbEv.SelectedIndex != 0 && cbEv.SelectedIndex != -1)
             {
-                szurt = evSzures(szurt, ev);
-            }
-            dgAdatok.ItemsSource = szurt;
-            lbOsszes.Content = $"Összes: {szurt.Sum(x => x.EmployeesNumber)}";
-
-        }
-        private void cbEv_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            List<Organization> szurt = organizations;
-
-            string orszag = cbOrszag.SelectedItem.ToString();
-            if (cbOrszag.SelectedIndex != 0 && cbOrszag.SelectedIndex != -1)
-            {
-                szurt = orszagSzures(szurt, orszag);
-            }
-            int ev = Convert.ToInt32(cbEv.SelectedItem);
-
-            if (cbEv.SelectedIndex != 0 && cbEv.SelectedIndex != -1)
-            {
+                int ev = Convert.ToInt32(cbEv.SelectedItem);
                 szurt = evSzures(szurt, ev);
             }
             dgAdatok.ItemsSource = szurt;
@@ -93,5 +76,15 @@ namespace WpfApp2
             return szurt;
         }
 
+        private void dgAdatok_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dgAdatok.SelectedItem is Organization)
+            {
+                Organization valasztottObjektum = dgAdatok.SelectedItem as Organization;
+                labID.Content = $"ID: {valasztottObjektum.Id.ToString()}";
+                labWEB.Content = $"Website: {valasztottObjektum.Website}";
+                labISM.Content = $"Leírás: {valasztottObjektum.Description}";
+            }
+        }
     }
 }
